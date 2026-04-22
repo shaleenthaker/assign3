@@ -1,0 +1,16 @@
+First, I made a 3x3 grid of 9 squares by using 3 divs with className board-row, 
+which each have 3 buttons with className square inside them, which are all wrapped inside a fragment. This is all
+inside a function called Board.
+Next, we optimized this code a bit by making a function named Square that builds one of those squares. Then, we simply
+call the function <Square /> inside the divs in the Board function instead of building the square each time.
+We give Square a prop named value, which we pass as the text to be displayed inside each square so we can number
+them 1 through 9.
+Next, we made the button print out "clicked!" in the console log when clicked
+by implementing a HandleClick function, and setting onClick to HandleClick.
+Next, I imported useState, and used that to set the value of each square to be 'X' when they are clicked.
+Now, we want to keep track of the state of the game, so we create an array of squares in the Board function,
+and set each square's value to be the corresponding index of the array, so that the Board parent function can keep 
+track of the state of each of its children (the squares).
+Now, we define a prop called onSquareClick in the Square function, which we set onClick to. In the board class,
+we set onSquareClick for each square to be set to a function we define called handleClick, which set's the
+ith index of the squares index (which we pass to the function as a parameter) to X.
