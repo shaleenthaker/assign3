@@ -155,6 +155,63 @@ class TestChorusLapilli(unittest.TestCase):
         tiles[0].click()
         self.assertTileIs(tiles[0], self.SYMBOL_X)
 
+    def test_six_placements_three_each(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        for idx in [0, 1, 2, 3, 5, 6]:
+            tiles[idx].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        xs = sum(1 for t in tiles if t.text.strip() == 'X')
+        os_ = sum(1 for t in tiles if t.text.strip() == 'O')
+        self.assertEqual(xs, 3)
+        self.assertEqual(os_, 3)
+
+    def test_no_moves_after_winner(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        for idx in [0, 3, 1, 4, 2]:
+            tiles[idx].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_before = [t.text.strip() for t in tiles]
+        tiles[5].click()
+        tiles[6].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_after = [t.text.strip() for t in tiles]
+        self.assertEqual(vals_before, vals_after)
+
+
+    def test_move_phase_non_adjacent_ignored(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        for idx in [0, 1, 2, 3, 5, 6]:
+            tiles[idx].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_before = [t.text.strip() for t in tiles]
+        tiles[0].click()   
+        tiles[8].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_after = [t.text.strip() for t in tiles]
+        self.assertEqual(vals_before, vals_after)
+
+
+    def test_center_constraint_non_winning_non_vacating_blocked(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        for idx in [0, 1, 4, 3, 2, 6]:
+            tiles[idx].click()
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_before = [t.text.strip() for t in tiles]
+        # X is in move phase with center. Moving piece at 2→5 doesn't win or vacate 4.
+        tiles[2].click()   # select X at 2
+        tiles[5].click()   # try to move to 5 — does not vacate center, does not win
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        vals_after = [t.text.strip() for t in tiles]
+        self.assertEqual(vals_before, vals_after)
+
+
+    def test_shows_winner(self):
+        """After X wins, the status element should announce the winner."""
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        for idx in [0, 3, 1, 4, 2]:   # X wins top row
+            tiles[idx].click()
+        status = self.driver.find_element(By.CLASS_NAME, 'status')
+        self.assertIn('X', status.text)
 
 # ================= [DO NOT MAKE ANY CHANGES BELOW THIS LINE] =================
 

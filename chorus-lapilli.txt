@@ -1,0 +1,34 @@
+To go from the tic-tac-toe game to chorus lapilli, we need to change/implement these features:
+    After a player's third move, every subsequent move will consist of two clicks: one to select one of their Xs or Os
+    on the board, and one to move it to a legal adjacent square. No Xs or Os will be added to the board once the players
+    take their third move.
+    A player's Xs or Os can only be moved to legal adjacent squares (next to, above, below, or diagonal to). Attempting
+    to move a piece to an illegal square, or trying to select an unoccupied square at turn start to try to add an 
+    additional X or O will result in nothing happening.
+    If a player has one of their Xs or Os in the middle square, their next move must be a winning move (3 in a row),
+    or to vacacte the piece from the middle square. Therefore, we need to check whether or not a move will result
+    in a win before it happens instead of after it occurs, and if it doesn't, do nothing.
+First, we will define a const array ADJACENT that, at each index, consists of an array of integers that are adjacent
+to the integer position denoted by the index. This means that when a player tries to move, we can check if the 
+square they are trying to move to is legal by checking if the position they are trying to move to is contained in the
+array thats index corresponds to the square the piece is currently on.
+Next, we define the helper functions:
+    countPieces - returns the number of squares on the board that have the player's piece type on them
+    isAdjacent - returns whether or not a square is adjacent to the current square
+    moveCenter - returns if the player has a piece on the center square
+    hasWinningMove - calculates every possible move the player can take in their given scenario, and returns whether or
+    not any of them result in a win.
+In the board component, we keep track of whether or not a player is in the moving phase by seeing how many pieces they've placed.
+Then, in handleClick, if it is not the moving phase, we let a player place a piece on any open square. Otherwise,
+they are in the moving phase. First, in the moving phase, we check what type of square the player clicked, and set a const
+selectedSquare to their square if it is one of the ones they have a piece on. Next, the player will click a different
+square. If they select the same square, we deselect the piece they clicked on, otherwise, we let them set their 
+move square to an adjacent square to the piece they picked, given it follows the center game-winning rule. 
+If the player selects a square that is not the center one while they have a piece in the center and they don't make a
+winning move, we return from the handleClick function early and make the player select a different square.
+Then, we display the text for a winner, if there is one. If there is not a winner, we tell the player whether they
+are in the move phase or the place phase. If they are in the move phase and they are on the center, we tell
+the player they must win or vacate the center. The player's turn in the move phase only ends once they make a valid move,
+so the checks we have in handleClick ensure that while the player is selecting squares that do not result in valid moves
+for them, they are forced to keep selecting squares until they pick a valid move. 
+Building the game and the board is the same as before, since there is still 9 squares, so that does not change.

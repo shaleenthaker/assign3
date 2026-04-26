@@ -13,4 +13,34 @@ and set each square's value to be the corresponding index of the array, so that 
 track of the state of each of its children (the squares).
 Now, we define a prop called onSquareClick in the Square function, which we set onClick to. In the board class,
 we set onSquareClick for each square to be set to a function we define called handleClick, which set's the
-ith index of the squares index (which we pass to the function as a parameter) to X.
+ith index of the squares index (which we pass to the function as a parameter) to X. By setting
+onSquareClick={() => handleClick(i)}, we prevent an infinite loop by only calling the handleClick function when the 
+button is actually clicked.
+At this point, when we run the app, the grid of squares is initially empty, and clicking on a square 
+causes an X to show up in the square.
+We want Xs and Os to alternate, so now we define a const xIsNext, which we set to true intially. Then, in the 
+handleClick function, if xIsNext is true, we set the square to X, otherwise, we set it to O. Then, using the function we 
+defined, setXIsNext, we set xIsNext to !xIsNext, so that on the next click, it will set the square to the opposite
+shape. However, we don't want a square with an X or O already on it to be set to the other shape, so we set a check to
+return early by checking if squares[i] has a value.
+Next, we implement a check to see if a player won the game by making a calculateWinner function. This function runs when 
+Board is instantiated, so when the game starts or when an unoccupied square is clicked. This function contains an array
+of all possible winning formations, and checks if any of those winning formations has 3 of the same character on them,
+which would mean that player won the game. It returns the character of the winning player if there is a winner,
+and null if there is not. Every time board is instantiated, it checks to see if there is a winner. If there is,
+the game terminates, and displays text that shows the winner. Otherwise, the text displays which player's turn it is.
+Now, we want to show a history of the game's moves, and let the player go back to a previous move. To do this, 
+we need to make one more parent, a Game component, which will be the parent of the Board component, which in turn
+is the parent of the Square components. In the Game component, we initialize an array called history, which is an array 
+where each element is one of the 9-element arrays that shows the state of the game. This array will store the state of the
+game in every move leading up to the current one. Furthermore, we want to track the state of the game in the Game component,
+so we move the xIsNext const up to the Game component, and pass it as a prop to Board.
+With all this, we can make it so that every time a move is taken, there is a list next to the game boards that lists out 
+each move, with each move having a button to go back to that move. When a move is taken, we add the board's state at that
+move to the history array. When a player clicks the "go to move ___" button, the history string is remade so that it only
+contains the states up to the move that was on the button clicked. This also remakes the board, so that the players can
+continue play from the move they selected.
+Lastly, now that we are keeping track of the number of the current move, we can see that X should go on odd moves, 
+and O on even moves. Therefore, we do not need to keep track of and update xIsNext independently anymore, since we can 
+simply check if currentMove % 2 == 0. With this, we have our game complete.
+
